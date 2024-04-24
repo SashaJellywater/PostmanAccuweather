@@ -1,0 +1,961 @@
+{
+	"info": {
+		"_postman_id": "6ca39e9b-edef-49db-af79-8a423e8b8d10",
+		"name": "Seminar1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31454778",
+		"_collection_link": "https://www.postman.com/jellywather/workspace/accuweather/collection/31454778-6ca39e9b-edef-49db-af79-8a423e8b8d10?action=share&source=collection_link&creator=31454778"
+	},
+	"item": [
+		{
+			"name": "Locations API",
+			"item": [
+				{
+					"name": "CountryList",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Check response length\", function () {\r",
+									"       var responseCountries = pm.response.json();\r",
+									"       pm.expect(responseCountries).to.be.an('array').and.to.have.lengthOf(52);\r",
+									"   });\r",
+									"pm.test(\"Check for Italy in the response\", function () {\r",
+									"       var italyCountry = pm.response.json().find(country => country.LocalizedName === \"Italy\");\r",
+									"       pm.expect(italyCountry).to.not.be.undefined;\r",
+									"   });\r",
+									"pm.test(\"Check specific country ID\", function () {\r",
+									"       var russia = pm.response.json().find(country => country.ID === \"RU\");\r",
+									"       pm.expect(russia.LocalizedName).to.equal(\"Russia\");\r",
+									"       pm.expect(russia.EnglishName).to.equal(\"Russia\");\r",
+									"   });"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/locations/v1/countries/EUR",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"locations",
+								"v1",
+								"countries",
+								"EUR"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RegionList",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Check if LocalizedName field is not empty\", function () {\r",
+									"    var responseRegions = pm.response.json();\r",
+									"    responseRegions.forEach(function (region) {\r",
+									"        pm.expect(region.LocalizedName).to.not.be.empty;\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Check the count of regions in the response\", function () {\r",
+									"    var regions = pm.response.json();\r",
+									"    pm.expect(regions).to.be.an('array').that.has.lengthOf(10);\r",
+									"});\r",
+									"pm.test(\"Check ID = EUR for Europe region\", function () {\r",
+									"    var region = pm.response.json();\r",
+									"    var europe;\r",
+									"    for (var i = 0; i < region.length; i++) {\r",
+									"        if (region[i].LocalizedName === 'Europe') {\r",
+									"            europe = region[i];\r",
+									"            break;\r",
+									"        }\r",
+									"    }\r",
+									"    pm.expect(europe.ID).to.equal('EUR');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/locations/v1/regions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"locations",
+								"v1",
+								"regions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TopCitiesList",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Check response length\", function () {\r",
+									"       var response = pm.response.json();\r",
+									"       pm.expect(response).to.be.an('array').and.to.have.lengthOf(50);\r",
+									"   });"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}locations/v1/topcities/50",
+							"host": [
+								"{{baseUrl}}locations"
+							],
+							"path": [
+								"v1",
+								"topcities",
+								"50"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PostalCodeSearch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Проверка города Moscow и страны RU по индексу 101000\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    \r",
+									"    for (var i = 0; i < jsonData.length; i++) {\r",
+									"        var cityData = jsonData[i];\r",
+									"        \r",
+									"        if (cityData.PrimaryPostalCode === \"101000\") {\r",
+									"            pm.expect(cityData.AdministrativeArea.EnglishName).to.equal(\"Moscow\");\r",
+									"            pm.expect(cityData.Country.ID).to.equal(\"RU\");\r",
+									"        }\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/locations/v1/postalcodes/search?101000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"locations",
+								"v1",
+								"postalcodes",
+								"search"
+							],
+							"query": [
+								{
+									"key": "101000",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GeopositionSearch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Проверка временной зоны и смещения для Europe/Moscow\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.TimeZone.Name).to.equal(\"Europe/Moscow\");\r",
+									"    pm.expect(jsonData.TimeZone.GmtOffset).to.equal(3.0);\r",
+									"});\r",
+									"pm.test(\"Проверка наличия родительского города Moscow\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.ParentCity.EnglishName).to.equal(\"Moscow\");\r",
+									"});\r",
+									"pm.test(\"Проверка наличия SupplementalAdminArea 'Severny'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.SupplementalAdminAreas[0].EnglishName).to.equal(\"Severny\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/locations/v1/cities/geoposition/search?q=55.79, 37.53",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"locations",
+								"v1",
+								"cities",
+								"geoposition",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "55.79, 37.53"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Forecast API",
+			"item": [
+				{
+					"name": "1DayofDailyForecasts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Проверка наличия полей 'Temperature', 'Minimum' и 'Maximum'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.DailyForecasts[0].Temperature).to.have.property(\"Minimum\");\r",
+									"    pm.expect(jsonData.DailyForecasts[0].Temperature).to.have.property(\"Maximum\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}forecasts/v1/daily/1day/294021",
+							"host": [
+								"{{baseUrl}}forecasts"
+							],
+							"path": [
+								"v1",
+								"daily",
+								"1day",
+								"294021"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5DaysofDailyForecasts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Проверка наличия результатов прогноза за 5 дней\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.DailyForecasts.length).to.be.at.least(5); // Проверка наличия как минимум 5 прогнозов\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}forecasts/v1/daily/5day/294021",
+							"host": [
+								"{{baseUrl}}forecasts"
+							],
+							"path": [
+								"v1",
+								"daily",
+								"5day",
+								"294021"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "15DaysofDailyForecasts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Проверка кода ответа 401 (Unauthorized)\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"pm.test(\"Проверка текста сообщения об ошибке\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.Message).to.eql(\"Api Authorization failed\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}forecasts/v1/daily/15day294021",
+							"host": [
+								"{{baseUrl}}forecasts"
+							],
+							"path": [
+								"v1",
+								"daily",
+								"15day294021"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1HourofHourlyForecasts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Проверка наличия поля 'DateTime'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData[0]).to.have.property(\"DateTime\");\r",
+									"});\r",
+									"pm.test(\"Проверка значения температуры в градусах по Фаренгейту\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData[0].Temperature.Unit).to.eql(\"F\");\r",
+									"});\r",
+									"pm.test(\"Проверка наличия ссылки на детальный прогноз\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData[0]).to.have.property(\"MobileLink\");\r",
+									"    pm.expect(jsonData[0]).to.have.property(\"Link\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}forecasts/v1/hourly/1hour/294021",
+							"host": [
+								"{{baseUrl}}forecasts"
+							],
+							"path": [
+								"v1",
+								"hourly",
+								"1hour",
+								"294021"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "12HoursofHourlyForecasts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Проверка наличия поля 'EpochDateTime' в каждой записи\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    _.each(jsonData, function(data){\r",
+									"        pm.expect(data).to.have.property(\"EpochDateTime\");\r",
+									"    });\r",
+									"});\r",
+									"pm.test(\"Проверка значений температуры во всех записях\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    _.each(jsonData, function(data){\r",
+									"        pm.expect(data.Temperature.Value).to.be.a('number');\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}forecasts/v1/hourly/12hour/294021",
+							"host": [
+								"{{baseUrl}}forecasts"
+							],
+							"path": [
+								"v1",
+								"hourly",
+								"12hour",
+								"294021"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "120HoursofHourlyForecasts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Проверка кода ответа 401 (Unauthorized)\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"pm.test(\"Проверка значения 'Code' на Unauthorized\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.Code).to.equal(\"Unauthorized\");\r",
+									"});\r",
+									"pm.test(\"Проверка текста сообщения об ошибке\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.Message).to.eql(\"Api Authorization failed\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}forecasts/v1/hourly/120hour/294021",
+							"host": [
+								"{{baseUrl}}forecasts"
+							],
+							"path": [
+								"v1",
+								"hourly",
+								"120hour",
+								"294021"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tropical API",
+			"item": [
+				{
+					"name": "GovernmentIssuedStormsByYear",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Проверка кода ответа 401 (Unauthorized)\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"pm.test(\"Проверка значения 'Code' на Unauthorized\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.Code).to.equal(\"Unauthorized\");\r",
+									"});\r",
+									"pm.test(\"Проверка текста сообщения об ошибке\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.Message).to.eql(\"Api Authorization failed\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}tropical/v1/gov/storms/2023",
+							"host": [
+								"{{baseUrl}}tropical"
+							],
+							"path": [
+								"v1",
+								"gov",
+								"storms",
+								"2023"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Current Conditions API",
+			"item": [
+				{
+					"name": "CurrentConditions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Проверка наличия поля 'LocalObservationDateTime'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData[0]).to.have.property(\"LocalObservationDateTime\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка наличия поля 'WeatherText'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData[0]).to.have.property(\"WeatherText\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка значения температуры в градусах Цельсия\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData[0].Temperature.Metric.Unit).to.equal(\"C\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка поля 'IsDayTime' на true\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData[0].IsDayTime).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}currentconditions/v1/294021",
+							"host": [
+								"{{baseUrl}}currentconditions"
+							],
+							"path": [
+								"v1",
+								"294021"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CurrentConditionsForTopCities",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Check response length\", function () {\r",
+									"       var response = pm.response.json();\r",
+									"       pm.expect(response).to.be.an('array').and.to.have.lengthOf(50);\r",
+									"   });\r",
+									"pm.test(\"Проверка наличия поля 'Temperature' для каждой локации\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    _.each(jsonData, function(location){\r",
+									"        pm.expect(location).to.have.property(\"Temperature\");\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}currentconditions/v1/topcities/50",
+							"host": [
+								"{{baseUrl}}currentconditions"
+							],
+							"path": [
+								"v1",
+								"topcities",
+								"50"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "24HoursHistoricalCurrentConditions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Check response length\", function () {\r",
+									"       var response = pm.response.json();\r",
+									"       pm.expect(response).to.be.an('array').and.to.have.lengthOf(24);\r",
+									"   });\r",
+									"pm.test(\"Проверка наличия полей 'LocalObservationDateTime' и 'Link' для каждой записи\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    _.each(jsonData, function(record){\r",
+									"        pm.expect(record).to.have.property(\"LocalObservationDateTime\");\r",
+									"        pm.expect(record).to.have.property(\"Link\");\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}currentconditions/v1/294021/historical/24",
+							"host": [
+								"{{baseUrl}}currentconditions"
+							],
+							"path": [
+								"v1",
+								"294021",
+								"historical",
+								"24"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6HoursHistoricalCurrentConditions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Check response length\", function () {\r",
+									"       var response = pm.response.json();\r",
+									"       pm.expect(response).to.be.an('array').and.to.have.lengthOf(6);\r",
+									"   });"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}currentconditions/v1/294021/historical",
+							"host": [
+								"{{baseUrl}}currentconditions"
+							],
+							"path": [
+								"v1",
+								"294021",
+								"historical"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GetWeatherTenDay",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function(){\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function() {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}forecasts/v1/daily/10day/290396",
+					"host": [
+						"{{baseUrl}}forecasts"
+					],
+					"path": [
+						"v1",
+						"daily",
+						"10day",
+						"290396"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetWeatherOneDay",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function() {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Count object = \" + pm.response.json().length, function() {\r",
+							"    pm.expect(pm.response.json().DailyForecasts.length).to.equal(1);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function() {\r",
+							"    pm.expect(pm.response.json().Headline.Category).to.equal(\"rain\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/forecasts/v1/daily/1day/290396",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"forecasts",
+						"v1",
+						"daily",
+						"1day",
+						"290396"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetLocation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function() {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Count object = \" + pm.response.json().length, function() {\r",
+							"    pm.expect(pm.response.json().length).to.equal(10);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function() {\r",
+							"    pm.expect(pm.response.json()[0].Key).to.equal(\"290396\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function() {\r",
+							"    pm.expect(pm.response.json()[0].LokalizedName).to.equal(\"Samara\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function() {\r",
+							"    pm.expect(pm.response.json()[0].Country.LokalizedName).to.equal(\"Russia\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/locations/v1/cities/autocomplete?q=Samara",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"locations",
+						"v1",
+						"cities",
+						"autocomplete"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "Samara"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/forecasts/v1/daily/5day/290396",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"forecasts",
+						"v1",
+						"daily",
+						"5day",
+						"290396"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "in",
+				"value": "query",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "oYbRkQiFPEQ0RfPFwTx8FAc9tar3Dr2W",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "apikey",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api-key-my",
+			"value": "oYbRkQiFPEQ0RfPFwTx8FAc9tar3Dr2W",
+			"type": "string"
+		},
+		{
+			"key": "baseUrl",
+			"value": "http://dataservice.accuweather.com/",
+			"type": "string"
+		}
+	]
+}
